@@ -9,6 +9,10 @@ const customCourseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  instructorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
   instructorName: {
     type: String,
     required: true,

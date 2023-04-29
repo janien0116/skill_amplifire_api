@@ -143,7 +143,7 @@ const getStudentOutputs = async (req, res) => {
       const formattedOutputs = outputs.map((output) => {
         return {
           ...output.toObject(),
-          downloadLink: `${output.studentOutput.replace('uploads\\', '')}`,
+          downloadLink: `${output.studentOutput}`,
         };
       });
       res.status(200).json(formattedOutputs);

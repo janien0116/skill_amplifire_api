@@ -27,9 +27,14 @@ const studentSignUp = async (req, res) => {
     });
 
     if (student) {
-      res.status(201).json({ msg: "Welcome! You're successfully signed up to Skill Amplifire", id: student.id });
+      res
+        .status(201)
+        .json({
+          msg: "Welcome! You're successfully signed up to Skill Amplifire",
+          id: student.id,
+        });
     } else {
-      res.status(400).json({ msg: "Invalid Fields"});
+      res.status(400).json({ msg: "Invalid Fields" });
     }
   } catch (error) {
     res.status(500).json({ msg: "Invalid Fields", error: error.message });
@@ -48,7 +53,9 @@ const enrollCoursePlan = async (req, res) => {
     if (existingCoursePlan) {
       return res
         .status(400)
-        .json({ msg: "You already have an Enrolled Course Plan. Please unenroll and try again" });
+        .json({
+          msg: "You already have an Enrolled Course Plan. Please unenroll and try again",
+        });
     }
 
     const courses = [];
@@ -94,21 +101,32 @@ const enrollCoursePlan = async (req, res) => {
     });
     if (coursePlan) {
       await CourseEnrolled.insertMany(enrolledCourses);
+      console.log(enrolledCourses);
       await StudentProgress.create({
         studentId: studentId,
-        noOfCourses: enrolledCourses.length,
+        noOfCourses: parseInt(enrolledCourses.length),
       });
       const customCourses = await CustomCourse.find({ studentId: studentId });
       if (customCourses) {
         await CustomCourse.deleteMany({ studentId: studentId });
       }
       const insertedData = await CoursePlan.findById(coursePlan._id);
-      res.status(201).json({ msg: "Congratulations! You're officialy enrolled to Skill Amplifire", data: insertedData});
+      res
+        .status(201)
+        .json({
+          msg: "Congratulations! You're officialy enrolled to Skill Amplifire",
+          data: insertedData,
+        });
     } else {
       res.status(400).json({ msg: "Cannot process enrollment this time" });
     }
   } catch (error) {
-    res.status(500).json({ msg: "Cannot process enrollment this time", error: error.message });
+    res
+      .status(500)
+      .json({
+        msg: "Cannot process enrollment this time",
+        error: error.message,
+      });
   }
 };
 
@@ -119,16 +137,17 @@ const addCustomCourse = async (req, res) => {
     req.body;
 
   try {
+    const instructor = await Instructor.findOne({instructorName: instructorName});
     const customCourse = await CustomCourse.create({
       studentId: studentId,
       courseTitle: courseTitle,
       instructorName: instructorName,
+      instructorId: instructor._id,
       curriculum: curriculum,
       category: category,
       level: level,
       amount: amount,
     });
-
     if (customCourse) {
       const insertedData = await CustomCourse.findById(customCourse._id);
       res.status(201).json({
@@ -139,7 +158,12 @@ const addCustomCourse = async (req, res) => {
       res.status(400).json({ msg: "Cannot add to course cart this time" });
     }
   } catch (error) {
-    res.status(500).json({ msg: "Cannot add to course cart this time", error: error.message });
+    res
+      .status(500)
+      .json({
+        msg: "Cannot add to course cart this time",
+        error: error.message,
+      });
   }
 };
 
@@ -197,7 +221,9 @@ const submitProject = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(500).json({ msg: "Cannot upload output this time", error: error.message });
+    res
+      .status(500)
+      .json({ msg: "Cannot upload output this time", error: error.message });
   }
 };
 
@@ -394,10 +420,19 @@ const addCoursetoCoursePlan = async (req, res) => {
       );
       res.status(200).json({ msg: "Course successfully added to Course Plan" });
     } else {
-      res.status(400).json({ msg: "You don't have enrolled course plan. Choose Add Custom instead" });
+      res
+        .status(400)
+        .json({
+          msg: "You don't have enrolled course plan. Choose Add Custom instead",
+        });
     }
   } catch (error) {
-    res.status(500).json({ msg: "You don't have enrolled course plan. Choose Add Custom instead", error: error.message });
+    res
+      .status(500)
+      .json({
+        msg: "You don't have enrolled course plan. Choose Add Custom instead",
+        error: error.message,
+      });
   }
 };
 
@@ -405,14 +440,28 @@ const unenrollCourseplan = async (req, res) => {
   let studentId = req.params.studentId;
 
   try {
-    await CoursePlan.findOneAndDelete({ studentId: studentId });
-    await InstructorClass.deleteMany({ studentId: studentId });
-    await CourseEnrolled.deleteMany({ studentId: studentId });
+    await CoursePlan.findOneAndDelete({ studentId: studentId })
+    await Project.deleteMany({studentId: studentId})
+    await InstructorClass.deleteMany({ studentId: studentId })
+    await CourseEnrolled.deleteMany({ studentId: studentId })
     await StudentProgress.findOneAndDelete({ studentId: studentId })
-      .then(() => res.status(200).json({ msg: `Your enrollment has been canceled. Please be aware that any future enrollments will incur charges as appropriate.` }))
-      .catch(() => res.status(400).json({ msg: "Sorry! Cannot unenroll this time" }));
+      .then(() =>
+        res
+          .status(200)
+          .json({
+            msg: `Your enrollment has been canceled. Please be aware that any future enrollments will incur charges as appropriate.`,
+          })
+      )
+      .catch(() =>
+        res.status(400).json({ msg: "Sorry! Cannot unenroll this time" })
+      );
   } catch (error) {
-    res.status(500).json({ msg: "Cannot process enrollment this time", error: error.message });
+    res
+      .status(500)
+      .json({
+        msg: "Cannot process enrollment this time",
+        error: error.message,
+      });
   }
 };
 
