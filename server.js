@@ -4,7 +4,6 @@ const path = require("path");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-app.use(cors());
 
 mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -22,6 +21,7 @@ db.on("error", (error) => console.log(error));
 db.once("open", () => console.log("Succesfully connected"));
 
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger);
 
