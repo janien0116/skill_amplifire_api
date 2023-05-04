@@ -10,6 +10,7 @@ const db = mongoose.connection;
 
 const logger = require("./middlewares/logger");
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "public")));
 
 const studentRoutes = require("./routes/Students");
 const instructorRoutes = require("./routes/Instructors");
