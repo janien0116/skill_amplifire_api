@@ -3,8 +3,6 @@ const InstructorClass = require("../models/InstructorClass");
 const Project = require("../models/Project");
 const Instructor = require("../models/Instructor");
 const mongoose = require("mongoose");
-const path = require("path");
-const CoursePlan = require("../models/CoursePlan");
 const CourseEnrolled = require("../models/CourseEnrolled");
 const Rating = require("../models/Rating");
 
